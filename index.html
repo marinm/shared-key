@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Code Input</title>
+        <link rel="manifest" href="manifest.json" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            html {
+                font-size: min(7vw, 10mm);
+                --bg-color: #a8c64e;
+                --fg-color: #3c412c;
+            }
+
+            * {
+                box-sizing: border-box;
+                font-family: "VT323";
+                color: var(--fg-color);
+                border-color: var(--fg-color);
+            }
+
+            body {
+                font-size: 1rem;
+                padding: 5vw;
+                margin: 0;
+                background-color: var(--bg-color);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                height: 100dvh;
+                font-weight: 400;
+                font-style: normal;
+                overflow: hidden;
+                box-sizing: border-box;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+            }
+
+            #code {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.3rem;
+                max-width: 10cm;
+            }
+
+            .digit {
+                border-bottom: 0.1rem solid var(--fg-color);
+                font-size: 1rem;
+                line-height: 1rem;
+                flex-grow: 1;
+                padding: 0.2rem 0;
+                text-align: center;
+                white-space: pre;
+            }
+
+            .digit.focus {
+                background-color: var(--fg-color);
+                color: var(--bg-color);
+            }
+
+            .gap {
+                width: 0.2rem;
+            }
+
+            .keypad {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: 1fr 1fr;
+                gap: 0.3rem;
+                width: 100%;
+                max-width: 10cm;
+            }
+
+            .keypad-btn {
+                background-color: transparent;
+                font-size: 1rem;
+                border-radius: 0.2rem;
+                border-width: 0.1rem 0.1rem 0.2rem 0.1rem;
+                aspect-ratio: 1;
+                padding: 0;
+                margin: 0;
+            }
+
+            .keypad-btn:active,
+            .keypad-btn:target {
+                border-width: 0.2rem 0.1rem 0.1rem 0.1rem;
+            }
+            .keypad-btn:focus {
+                outline: 0.1em solid var(--fg-color);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="code">
+            <div class="digit" data-position="0"> </div>
+            <div class="digit" data-position="1"> </div>
+            <div class="digit" data-position="2"> </div>
+            <div class="digit" data-position="3"> </div>
+            <div class="gap"></div>
+            <div class="digit" data-position="4"> </div>
+            <div class="digit" data-position="5"> </div>
+            <div class="digit" data-position="6"> </div>
+            <div class="digit" data-position="7"> </div>
+        </div>
+        <div class="keypad">
+            <button class="keypad-btn" data-value="0">0</button>
+            <button class="keypad-btn" data-value="1">1</button>
+            <button class="keypad-btn" data-value="2">2</button>
+            <button class="keypad-btn" data-value="3">3</button>
+            <button class="keypad-btn" data-value="4">4</button>
+            <button class="keypad-btn" data-value="5">5</button>
+            <button class="keypad-btn" data-value="6">6</button>
+            <button class="keypad-btn" data-value="7">7</button>
+            <button class="keypad-btn" data-value="8">8</button>
+            <button class="keypad-btn" data-value="9">9</button>
+        </div>
+
+        <script>
+            const codeLength = 8;
+
+            const code = new Array(codeLength);
+            let focusPosition = 0;
+
+            function renderFocus() {
+                const digits = document.querySelectorAll(".digit");
+
+                digits.forEach((element) => {
+                    element.classList.remove("focus");
+                });
+
+                const focusDigit = Array.from(digits).find(
+                    (el) => el.dataset.position == String(focusPosition)
+                );
+
+                focusDigit.classList.add("focus");
+            }
+
+            function renderCode() {
+                code.forEach((value, index) => {
+                    const digit = document.querySelector(
+                        `.digit[data-position="${index}"]`
+                    );
+
+                    if (digit) {
+                        digit.innerHTML = value;
+                    }
+                });
+            }
+
+            document.querySelectorAll(".digit").forEach((element) => {
+                element.addEventListener("click", (event) => {
+                    focusPosition = Number(event.target.dataset.position);
+                    renderFocus();
+                });
+            });
+
+            document.querySelectorAll(".keypad-btn").forEach((element) => {
+                element.addEventListener("click", (event) => {
+                    code[focusPosition] = event.target.dataset.value;
+
+                    focusPosition =
+                        focusPosition < codeLength - 1
+                            ? focusPosition + 1
+                            : focusPosition;
+
+                    renderCode();
+                    renderFocus();
+                });
+            });
+
+            renderFocus();
+        </script>
+    </body>
+</html>
