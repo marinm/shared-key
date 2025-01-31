@@ -85,3 +85,29 @@ body {
 .keypad-btn:focus {
     outline: 0.1em solid var(--fg-color);
 }
+
+.own-code-container {
+    
+    width: 100%;
+    max-width: 10cm;
+    padding-bottom: 1rem;
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+
+}
+
+#own-code {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 10cm;
+    padding-bottom: 1rem;
+}
+
+#own-code .digit {
+    background-color: var(--fg-color);
+    color: var(--bg-color);
+}

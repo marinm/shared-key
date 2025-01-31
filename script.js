@@ -3,10 +3,26 @@ const codeLength = 8;
 const code = new Array(codeLength);
 let focusPosition = 0;
 
+const ownCode = randomCode();
+
 renderFocus();
 
+renderOwnCode();
+
+function renderOwnCode() {
+    [...ownCode].forEach((value, index) => {
+        const digit = document.querySelector(
+            `#own-code .digit[data-position="${index}"]`
+        );
+
+        if (digit) {
+            digit.innerHTML = value;
+        }
+    });
+}
+
 function renderFocus() {
-    const digits = document.querySelectorAll(".digit");
+    const digits = document.querySelectorAll("#code .digit");
 
     digits.forEach((element) => {
         element.classList.remove("focus");
@@ -22,7 +38,7 @@ function renderFocus() {
 function renderCode() {
     code.forEach((value, index) => {
         const digit = document.querySelector(
-            `.digit[data-position="${index}"]`
+            `#code .digit[data-position="${index}"]`
         );
 
         if (digit) {
@@ -31,7 +47,7 @@ function renderCode() {
     });
 }
 
-document.querySelectorAll(".digit").forEach((element) => {
+document.querySelectorAll("#code .digit").forEach((element) => {
     element.addEventListener("click", (event) => {
         focusPosition = Number(event.target.dataset.position);
         renderFocus();
@@ -49,3 +65,9 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
         renderFocus();
     });
 });
+
+function randomCode() {
+    const array = new Uint32Array(1);
+    self.crypto.getRandomValues(array);
+    return String(array[0]).padStart(10, "0").slice(-codeLength);
+}
