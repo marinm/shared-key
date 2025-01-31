@@ -3,6 +3,8 @@ const codeLength = 8;
 const code = new Array(codeLength);
 let focusPosition = 0;
 
+renderFocus();
+
 function renderFocus() {
     const digits = document.querySelectorAll(".digit");
 
@@ -47,5 +49,3 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
         renderFocus();
     });
 });
-
-renderFocus();
