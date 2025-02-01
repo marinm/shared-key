@@ -1,6 +1,6 @@
-const codeLength = 8;
+const CODE_LENGTH = 8;
 const ownCode = randomCode();
-const code = Array(codeLength).fill(' ');
+const code = Array(CODE_LENGTH).fill(' ');
 let focusPosition = 0;
 
 renderOwnCode();
@@ -57,7 +57,7 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
         code[focusPosition] = event.target.dataset.value;
 
         focusPosition =
-            focusPosition < codeLength - 1 ? focusPosition + 1 : focusPosition;
+            focusPosition < CODE_LENGTH - 1 ? focusPosition + 1 : focusPosition;
 
         renderCode();
         renderFocus();
@@ -67,5 +67,5 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
 function randomCode() {
     const array = new Uint32Array(1);
     self.crypto.getRandomValues(array);
-    return String(array[0]).padStart(10, "0").slice(-codeLength);
+    return String(array[0]).padStart(10, "0").slice(-CODE_LENGTH);
 }
