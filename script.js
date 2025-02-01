@@ -13,7 +13,12 @@ function showScreen(screenId) {
     document
         .querySelectorAll(".screen")
         .forEach((el) => el.classList.add("hidden"));
-    document.getElementById(screenId).classList.remove("hidden");
+
+	const delay = (screenId === currentScreenId) ? 0 : 200;
+
+	setTimeout(() => {
+		document.getElementById(screenId).classList.remove("hidden");
+	}, delay);
 }
 
 function renderOwnCode() {
