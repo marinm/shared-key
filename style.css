@@ -86,15 +86,15 @@ body {
     outline: 0.1em solid var(--fg-color);
 }
 
+
+
 .own-code-container {
-    
     width: 100%;
     max-width: 10cm;
     padding-bottom: 1rem;
     display: flex;
     gap: 1em;
     flex-direction: column;
-
 }
 
 #own-code {
@@ -110,4 +110,13 @@ body {
 #own-code .digit {
     background-color: var(--fg-color);
     color: var(--bg-color);
+}
+
+.connect-btn {
+    background-color: transparent;
+    font-size: 1rem;
+    border-radius: 0.2rem;
+    border-width: 0.1rem 0.1rem 0.2rem 0.1rem;
+    padding: 0.3rem;
+    margin: 0;
 }
