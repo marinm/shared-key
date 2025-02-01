@@ -1,10 +1,10 @@
 const CODE_LENGTH = 8;
 const ownCode = randomCode();
-const code = Array(CODE_LENGTH).fill(' ');
+const friendCode = Array(CODE_LENGTH).fill(' ');
 let focusPosition = 0;
 
 renderOwnCode();
-renderCode();
+renderFriendCode();
 renderFocus();
 
 function renderOwnCode() {
@@ -20,7 +20,7 @@ function renderOwnCode() {
 }
 
 function renderFocus() {
-    const digits = document.querySelectorAll("#code .digit");
+    const digits = document.querySelectorAll("#friend-code .digit");
 
     digits.forEach((element) => {
         element.classList.remove("focus");
@@ -33,10 +33,10 @@ function renderFocus() {
     focusDigit.classList.add("focus");
 }
 
-function renderCode() {
-    code.forEach((value, index) => {
+function renderFriendCode() {
+    friendCode.forEach((value, index) => {
         const digit = document.querySelector(
-            `#code .digit[data-position="${index}"]`
+            `#friend-code .digit[data-position="${index}"]`
         );
 
         if (digit) {
@@ -45,7 +45,7 @@ function renderCode() {
     });
 }
 
-document.querySelectorAll("#code .digit").forEach((element) => {
+document.querySelectorAll("#friend-code .digit").forEach((element) => {
     element.addEventListener("click", (event) => {
         focusPosition = Number(event.target.dataset.position);
         renderFocus();
@@ -54,12 +54,12 @@ document.querySelectorAll("#code .digit").forEach((element) => {
 
 document.querySelectorAll(".keypad-btn").forEach((element) => {
     element.addEventListener("click", (event) => {
-        code[focusPosition] = event.target.dataset.value;
+        friendCode[focusPosition] = event.target.dataset.value;
 
         focusPosition =
             focusPosition < CODE_LENGTH - 1 ? focusPosition + 1 : focusPosition;
 
-        renderCode();
+        renderFriendCode();
         renderFocus();
     });
 });
