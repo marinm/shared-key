@@ -1,13 +1,21 @@
-import {randomCode} from './randomCode.js';
+import { randomCode } from "./randomCode.js";
 
 const SERVER_URL = "https://marinm.net/broadcast";
 const tempSharedKeyConnection = null;
 
 const currentScreenId = "screen-code-input";
 const CODE_LENGTH = 8;
+const SECRET_HALF_LENGTH = 32;
 const ownCode = randomCode(CODE_LENGTH).split("");
 const friendCode = Array(CODE_LENGTH).fill(" ");
 let focusPosition = 0;
+
+const ownId = randomCode(4);
+const ownSecretHalf = randomCode(SECRET_HALF_LENGTH);
+
+let friendId = null;
+let friendSecretHalf = null;
+let friendAck = false;
 
 renderOwnCode();
 renderFriendCode();
@@ -120,8 +128,8 @@ function flashMissingDigits() {
 }
 
 function getTempKey() {
-    code1 = friendCode.join("");
-    code2 = ownCode.join("");
+    const code1 = friendCode.join("");
+    const code2 = ownCode.join("");
 
     // Smaller key first
     return code1 < code2 ? code1 + code2 : code2 + code1;
@@ -136,13 +144,98 @@ function connect() {
     tempConnection(getTempKey());
 }
 
+function parseJSON(string) {
+    try {
+        return JSON.parse(string);
+    } catch (e) {
+		console.log('invalid JSON', string);
+	}
+
+    return null;
+}
+
+function validateMessage(message) {
+    if (!message) {
+        return false;
+    }
+
+	if (message.my_id?.length != 4) {
+		return false;
+	}
+
+    if (message.my_secret_half) {
+        return (
+            String(message.my_secret_half ?? "").length === SECRET_HALF_LENGTH
+        );
+    }
+
+    if (message.your_id) {
+        return String(message.your_id).length === 4;
+    }
+
+    return false;
+}
+
 function tempConnection(tempKey) {
-    console.log(tempKey);
     const url = `${SERVER_URL}?channel=${tempKey}`;
 
-    socket = new WebSocket(url);
+    const ownSecretPart = randomCode(SECRET_HALF_LENGTH);
 
-    socket.onopen = (event) => {};
-    socket.onclose = (event) => {};
-    socket.onmessage = (event) => {};
+    let announceInterval = null;
+
+    const socket = new WebSocket(url);
+
+    socket.onopen = (event) => {
+        announceInterval = setInterval(() => {
+            socket.send(
+                JSON.stringify({
+                    my_id: ownId,
+                    my_secret_half: ownSecretPart,
+                })
+            );
+        }, 1000);
+    };
+
+    socket.onclose = (event) => {
+        clearInterval(announceInterval);
+    };
+
+    socket.onmessage = (event) => {
+        const message = parseJSON(event.data);
+
+        if (!validateMessage(message)) {
+			console.log('invalid message', message);
+            socket.close();
+            return;
+        }
+
+		if (message.my_id === ownId) {
+            return;
+        }
+
+		if (message.my_secret_half) {
+			friendId = message.my_id;
+			friendSecretHalf = message.my_secret_half;
+
+			socket.send(JSON.stringify({my_id: ownId, your_id: friendId}));
+		}
+
+		if (message.your_id === ownId) {
+			friendAck = true;
+		}
+
+		console.log({ friendId, friendSecretHalf, friendAck });
+
+		if (friendId && friendSecretHalf && friendAck) {
+			clearInterval(announceInterval);
+			showConnected(message.my_id);
+		}
+    };
+}
+
+function showConnected(friendId) {
+    console.log("connected to " + friendId);
+    document.getElementById("own-id").innerText = ownId;
+    document.getElementById("friend-id").innerText = friendId;
+    showScreen("screen-connected");
 }
