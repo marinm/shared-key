@@ -1,11 +1,20 @@
+const currentScreenId = "screen-code-input";
 const CODE_LENGTH = 8;
 const ownCode = randomCode();
-const friendCode = Array(CODE_LENGTH).fill(' ');
+const friendCode = Array(CODE_LENGTH).fill(" ");
 let focusPosition = 0;
 
 renderOwnCode();
 renderFriendCode();
 renderFocus();
+showScreen("screen-code-input");
+
+function showScreen(screenId) {
+    document
+        .querySelectorAll(".screen")
+        .forEach((el) => el.classList.add("hidden"));
+    document.getElementById(screenId).classList.remove("hidden");
+}
 
 function renderOwnCode() {
     [...ownCode].forEach((value, index) => {
@@ -62,6 +71,10 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
         renderFriendCode();
         renderFocus();
     });
+});
+
+document.getElementById("connect-btn").addEventListener("click", (event) => {
+    showScreen("screen-waiting");
 });
 
 function randomCode() {
