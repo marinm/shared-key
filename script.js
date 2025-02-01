@@ -1,6 +1,6 @@
 const currentScreenId = "screen-code-input";
 const CODE_LENGTH = 8;
-const ownCode = randomCode();
+const ownCode = randomCode(CODE_LENGTH).split("");
 const friendCode = Array(CODE_LENGTH).fill(" ");
 let focusPosition = 0;
 
@@ -8,6 +8,20 @@ renderOwnCode();
 renderFriendCode();
 renderFocus();
 showScreen("screen-code-input");
+
+function randomCode(n) {
+    // one unsigned 32-bit number has the range [0, 4,294,967,296 - 1]
+    // Can provide 8 digits
+
+    const nInts = parseInt(Math.ceil(n / 8));
+    const array = new Uint32Array(nInts);
+    self.crypto.getRandomValues(array);
+
+    return array
+        .map((num) => num.toString().padStart(8, "0"))
+        .join("")
+        .slice(0, n);
+}
 
 function showScreen(screenId) {
     document
@@ -81,12 +95,6 @@ document.querySelectorAll(".keypad-btn").forEach((element) => {
 document.getElementById("connect-btn").addEventListener("click", (event) => {
     connect();
 });
-
-function randomCode() {
-    const array = new Uint32Array(1);
-    self.crypto.getRandomValues(array);
-    return String(array[0]).padStart(10, "0").slice(-CODE_LENGTH).split("");
-}
 
 function validateFriendCode() {
     const isValid = friendCode.every((d) => "0123456789".includes(d));
