@@ -1,13 +1,11 @@
 const codeLength = 8;
-
-const code = new Array(codeLength);
+const ownCode = randomCode();
+const code = Array(codeLength).fill(' ');
 let focusPosition = 0;
 
-const ownCode = randomCode();
-
-renderFocus();
-
 renderOwnCode();
+renderCode();
+renderFocus();
 
 function renderOwnCode() {
     [...ownCode].forEach((value, index) => {
