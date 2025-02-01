@@ -1,3 +1,6 @@
+const SERVER_URL = "https://marinm.net/broadcast";
+const tempSharedKeyConnection = null;
+
 const currentScreenId = "screen-code-input";
 const CODE_LENGTH = 8;
 const ownCode = randomCode(CODE_LENGTH).split("");
@@ -109,30 +112,49 @@ function validateFriendCode() {
 }
 
 function friendCodeDigitAt(position) {
-	return document.querySelector(`#friend-code .digit[data-position="${position}"]`);
+    return document.querySelector(
+        `#friend-code .digit[data-position="${position}"]`
+    );
 }
 
 function flashMissingDigits() {
     const digits = [...document.querySelectorAll("#friend-code .digit")];
 
-	friendCode.forEach((d, index) => {
-		if (!"0123456789".includes(d)) {
-			friendCodeDigitAt(index).classList.add('focus');
-		}
-	})
+    friendCode.forEach((d, index) => {
+        if (!"0123456789".includes(d)) {
+            friendCodeDigitAt(index).classList.add("focus");
+        }
+    });
 
     const wait = 500;
 
     setTimeout(() => renderFocus(), wait);
 }
 
-function connect() {
-    const tempSharedKey = friendCode.join("") + ownCode.join("");
-    console.log(tempSharedKey);
+function getTempKey() {
+    code1 = friendCode.join("");
+    code2 = ownCode.join("");
 
+    // Smaller key first
+    return code1 < code2 ? code1 + code2 : code2 + code1;
+}
+
+function connect() {
     if (!validateFriendCode()) {
         return;
     }
 
     showScreen("screen-waiting");
+    tempConnection(getTempKey());
+}
+
+function tempConnection(tempKey) {
+    console.log(tempKey);
+    const url = `${SERVER_URL}?channel=${tempKey}`;
+
+    socket = new WebSocket(url);
+
+    socket.onopen = (event) => {};
+    socket.onclose = (event) => {};
+    socket.onmessage = (event) => {};
 }
