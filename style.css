@@ -21,7 +21,7 @@ body {
     background-color: var(--bg-color);
     font-weight: 400;
     font-style: normal;
-    overflow: hidden;
+    overflow: auto;
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
@@ -35,7 +35,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 2rem;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .hidden {
